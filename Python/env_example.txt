@@ -1,0 +1,19 @@
+# Cấu hình MySQL Database cho ShoeMart ChatBot
+# Copy file này thành .env và điền thông tin của bạn
+
+# Database Configuration
+DB_HOST=localhost
+DB_PORT=3306
+DB_NAME=shoe_store_db
+DB_USER=tru123
+DB_PASSWORD=tru12345
+
+# ChatBot Settings
+CHATBOT_DEBUG=True
+CHATBOT_MAX_HISTORY=100
+
+# API Settings (nếu có)
+API_HOST=0.0.0.0
+API_PORT=5000
+API_DEBUG=True
+
