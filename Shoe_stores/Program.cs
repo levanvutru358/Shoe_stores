@@ -43,11 +43,11 @@ builder.Services.AddAuthorization();
 // ========= CORS (for frontend requests) =========
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAll", builder =>
+    options.AddPolicy("AllowReactApp", policy =>
     {
-        builder.AllowAnyOrigin()
-               .AllowAnyHeader()
-               .AllowAnyMethod();
+        policy.WithOrigins("http://localhost:3000") // FE React đang chạy
+              .AllowAnyHeader()
+              .AllowAnyMethod();
     });
 });
 
@@ -83,6 +83,34 @@ builder.Services.AddControllers();
 
 var app = builder.Build();
 
+// ========= TEST KẾT NỐI MYSQL =========
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
+    try
+    {
+        if (await db.Database.CanConnectAsync())
+        {
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine("✅ Kết nối MySQL thành công!");
+            Console.ResetColor();
+        }
+        else
+        {
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine("⚠️ Không thể kết nối tới MySQL.");
+            Console.ResetColor();
+        }
+    }
+    catch (Exception ex)
+    {
+        Console.ForegroundColor = ConsoleColor.Red;
+        Console.WriteLine("❌ Lỗi kết nối MySQL: " + ex.Message);
+        Console.ResetColor();
+    }
+}
+
 // ========= MIDDLEWARE =========
 app.UseSwagger();
 app.UseSwaggerUI(c =>
@@ -92,7 +120,7 @@ app.UseSwaggerUI(c =>
 
 app.UseHttpsRedirection();
 
-app.UseCors("AllowAll");
+app.UseCors("AllowReactApp"); // Áp dụng CORS ở đây
 
 app.UseAuthentication();
 app.UseAuthorization();
