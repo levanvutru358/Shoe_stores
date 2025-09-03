@@ -1,11 +1,12 @@
 import { useState, useContext } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { FaUser, FaEnvelope, FaLock } from "react-icons/fa";
 import AuthContext from "../contexts/AuthContext";
+import { toast } from "react-toastify";
 
 function Register() {
   const [userData, setUserData] = useState({
-    fullName: "",
+    username: "",
     email: "",
     password: "",
   });
@@ -20,10 +21,9 @@ function Register() {
     e.preventDefault();
     try {
       await signUp(userData);
-      alert("Registration successful! Please sign in.");
       navigate("/login");
     } catch (err) {
-      alert("Registration failed, please try again.");
+      toast.error(err.message);
     }
   };
 
@@ -33,20 +33,20 @@ function Register() {
         <h2 className="text-3xl font-bold text-center text-gray-800 mb-8">
           Sign Up
         </h2>
-        <div className="space-y-6">
-          {/* Full Name */}
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Username */}
           <div>
             <label className="block text-sm font-medium text-gray-600 mb-2">
-              Full Name
+              Username
             </label>
             <div className="relative">
               <FaUser className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
               <input
                 type="text"
-                name="fullName"
-                value={userData.fullName}
+                name="username"
+                value={userData.username}
                 onChange={handleChange}
-                placeholder="Enter your full name"
+                placeholder="Enter your username"
                 className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all duration-200"
                 required
               />
@@ -93,19 +93,18 @@ function Register() {
 
           {/* Button */}
           <button
-            onClick={handleSubmit}
+            type="submit"
             className="w-full bg-blue-600 text-white py-3 rounded-lg shadow-md hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200 font-medium"
           >
             Sign Up
           </button>
-        </div>
+        </form>
 
-        {/* Link to Login */}
         <p className="text-sm text-gray-600 text-center mt-6">
           Already have an account?{" "}
-          <a href="/login" className="text-blue-600 hover:text-blue-700 font-medium transition-all duration-200">
+          <Link to="/login" className="text-blue-600 hover:text-blue-700 font-medium transition-all duration-200">
             Sign in now
-          </a>
+          </Link>
         </p>
       </div>
     </div>

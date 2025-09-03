@@ -1,22 +1,20 @@
-import { useState, useContext, useEffect } from 'react';
-import AuthContext from '../contexts/AuthContext';
+import { useState, useContext, useEffect } from "react";
+import { Link } from "react-router-dom";
+import AuthContext from "../contexts/AuthContext";
+import { toast } from "react-toastify";
 
 function Profile() {
   const { user, updateProfile } = useContext(AuthContext);
   const [formData, setFormData] = useState({
-    fullName: '',
-    email: '',
-    phone: '',
-    address: '',
+    username: "",
+    email: "",
   });
 
   useEffect(() => {
     if (user) {
       setFormData({
-        fullName: user.fullName || '',
-        email: user.email || '',
-        phone: user.phone || '',
-        address: user.address || '',
+        username: user.username || "",
+        email: user.email || "",
       });
     }
   }, [user]);
@@ -29,25 +27,24 @@ function Profile() {
     e.preventDefault();
     try {
       await updateProfile(formData);
-      alert('Profile updated successfully!');
     } catch (err) {
-      alert('Error updating profile');
+      toast.error(err.message);
     }
   };
 
   if (!user) {
     return (
       <p className="text-center text-gray-600 text-lg py-12">
-        Please login to view your profile.{' '}
-        <a href="/login" className="text-blue-600 hover:underline">
+        Please login to view your profile.{" "}
+        <Link to="/login" className="text-blue-600 hover:underline transition-all duration-200">
           Sign in now
-        </a>
+        </Link>
       </p>
     );
   }
 
   return (
-    <div className="container mx-auto py-12 px-4 sm:px-6 lg:px-8">
+    <div className="container mx-auto py-12 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-gray-50 to-white">
       <h2 className="text-3xl font-bold text-gray-800 mb-8 text-center">
         Your Profile
       </h2>
@@ -55,18 +52,19 @@ function Profile() {
         <h3 className="text-xl font-semibold text-gray-700 mb-6">
           Personal Information
         </h3>
-        <div className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-6">
           <div>
             <label className="block text-sm font-medium text-gray-600 mb-2">
-              Full Name
+              Username
             </label>
             <input
               type="text"
-              name="fullName"
-              value={formData.fullName}
+              name="username"
+              value={formData.username}
               onChange={handleChange}
               className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all duration-200"
-              placeholder="Enter your full name"
+              placeholder="Enter your username"
+              required
             />
           </div>
           <div>
@@ -80,41 +78,16 @@ function Profile() {
               onChange={handleChange}
               className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all duration-200"
               placeholder="Enter your email"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-600 mb-2">
-              Phone Number
-            </label>
-            <input
-              type="text"
-              name="phone"
-              value={formData.phone}
-              onChange={handleChange}
-              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all duration-200"
-              placeholder="Enter your phone number"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-600 mb-2">
-              Address
-            </label>
-            <input
-              type="text"
-              name="address"
-              value={formData.address}
-              onChange={handleChange}
-              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all duration-200"
-              placeholder="Enter your address"
+              required
             />
           </div>
           <button
-            onClick={handleSubmit}
+            type="submit"
             className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200 font-medium"
           >
             Update Profile
           </button>
-        </div>
+        </form>
       </div>
     </div>
   );

@@ -1,36 +1,29 @@
 import { useState, useContext } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { FaEnvelope, FaLock } from "react-icons/fa";
 import AuthContext from "../contexts/AuthContext";
+import { toast } from "react-toastify";
 
 function Login() {
+  const [credentials, setCredentials] = useState({
+    email: "",
+    password: "",
+  });
   const { signIn } = useContext(AuthContext);
   const navigate = useNavigate();
-  const [credentials, setCredentials] = useState({ email: "", password: "" });
-  const [error, setError] = useState("");
+
+  const handleChange = (e) => {
+    setCredentials({ ...credentials, [e.target.name]: e.target.value });
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      console.log("Sending credentials:", credentials);
-      const userData = await signIn(credentials);
-      console.log("User data after login:", userData);
-      if (userData.role === "Admin") {
-        navigate("/admin");
-      } else {
-        navigate("/profile");
-      }
+      await signIn(credentials);
+      navigate("/"); // Chuyển hướng về trang chủ sau khi đăng nhập
     } catch (err) {
-      console.error("Login error:", err.response?.data || err.message);
-      setError(
-        "Login failed: " +
-          (err.response?.data?.message || err.message)
-      );
+      toast.error(err.message);
     }
-  };
-
-  const handleChange = (e) => {
-    setCredentials({ ...credentials, [e.target.name]: e.target.value });
   };
 
   return (
@@ -39,7 +32,7 @@ function Login() {
         <h2 className="text-3xl font-bold text-center text-gray-800 mb-8">
           Sign In
         </h2>
-        <div className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-6">
           {/* Email */}
           <div>
             <label className="block text-sm font-medium text-gray-600 mb-2">
@@ -78,28 +71,20 @@ function Login() {
             </div>
           </div>
 
-          {/* Error */}
-          {error && (
-            <p className="text-red-500 text-sm text-center bg-red-50 py-2 rounded-lg">
-              {error}
-            </p>
-          )}
-
           {/* Button */}
           <button
-            onClick={handleSubmit}
+            type="submit"
             className="w-full bg-blue-600 text-white py-3 rounded-lg shadow-md hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200 font-medium"
           >
             Sign In
           </button>
-        </div>
+        </form>
 
-        {/* Link */}
         <p className="text-sm text-gray-600 text-center mt-6">
           Don't have an account?{" "}
-          <a href="/register" className="text-blue-600 hover:text-blue-700 font-medium transition-all duration-200">
-            Register now
-          </a>
+          <Link to="/register" className="text-blue-600 hover:text-blue-700 font-medium transition-all duration-200">
+            Sign up now
+          </Link>
         </p>
       </div>
     </div>

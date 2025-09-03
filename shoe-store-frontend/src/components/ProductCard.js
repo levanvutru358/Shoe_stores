@@ -1,24 +1,32 @@
-import { useContext } from 'react';
-import CartContext from '../contexts/CartContext';
+import { useContext } from "react";
+import CartContext from "../contexts/CartContext";
+import { toast } from "react-toastify";
 
-function ProductCard({ shoe }) {
+function ProductCard({ product }) {
   const { addItemToCart } = useContext(CartContext);
 
+  const handleAddToCart = async () => {
+    try {
+      await addItemToCart({ productId: product.id, quantity: 1 });
+    } catch (err) {
+      toast.error(err.message);
+    }
+  };
+
   return (
-    <div className="bg-white shadow-lg rounded-xl overflow-hidden transform transition-all duration-300 hover:shadow-2xl hover:-translate-y-1">
-      <div className="relative">
-        <img
-          src={shoe.image}
-          alt={shoe.name}
-          className="w-full h-64 object-cover transition-transform duration-300 hover:scale-105"
-        />
-      </div>
-      <div className="p-6">
-        <h3 className="text-xl font-semibold text-gray-800 truncate">{shoe.name}</h3>
-        <p className="text-lg text-gray-600 mt-1">${shoe.price.toFixed(2)}</p>
+    <div className="bg-white rounded-xl shadow-md overflow-hidden transition-all duration-300 hover:shadow-lg">
+      <img
+        src={product.imageUrl || "placeholder.jpg"}
+        alt={product.name}
+        className="w-full h-48 object-cover transition-transform duration-300 hover:scale-105"
+      />
+      <div className="p-4">
+        <h3 className="text-lg font-semibold text-gray-800 truncate">{product.name}</h3>
+        <p className="text-gray-500 text-sm mt-1 truncate">{product.description}</p>
+        <p className="text-gray-800 font-bold mt-2">${product.price.toFixed(2)}</p>
         <button
-          onClick={() => addItemToCart({ productId: shoe.id, quantity: 1 })}
-          className="mt-4 w-full bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200 font-medium"
+          onClick={handleAddToCart}
+          className="mt-4 w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-all duration-200 font-medium"
         >
           Add to Cart
         </button>

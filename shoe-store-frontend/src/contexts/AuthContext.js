@@ -1,6 +1,7 @@
-import { createContext, useState, useEffect } from 'react';
-import { login, register, getCurrentUser, setToken, getToken } from '../services/authService';
-import { updateUser } from '../services/userService';
+import { createContext, useState, useEffect } from "react";
+import { login, register, getCurrentUser, setToken, getToken } from "../services/authService";
+import { updateUser } from "../services/userService";
+import { toast } from "react-toastify";
 
 const AuthContext = createContext();
 
@@ -15,9 +16,10 @@ export function AuthProvider({ children }) {
       getCurrentUser()
         .then((data) => {
           setUser(data);
-          setIsAdmin(data.role === 'Admin');
+          setIsAdmin(data.role === "Admin");
         })
-        .catch(() => {
+        .catch((err) => {
+          toast.error(err.message);
           setToken(null);
         })
         .finally(() => setLoading(false));
@@ -27,38 +29,61 @@ export function AuthProvider({ children }) {
   }, []);
 
   const signIn = async (credentials) => {
-    const data = await login(credentials);
-    if (data.token) {
-      setToken(data.token); // Lưu token
-      const userData = await getCurrentUser(); // Lấy thông tin user
-      setUser(userData);
-      setIsAdmin(userData.role === 'Admin');
-      return userData; // Trả về userData để component con xử lý điều hướng
+    try {
+      const data = await login(credentials);
+      if (data.token) {
+        setToken(data.token);
+        const userData = await getCurrentUser();
+        setUser(userData);
+        setIsAdmin(userData.role === "Admin");
+        toast.success("Logged in successfully!");
+        return userData;
+      }
+      throw new Error("Login failed");
+    } catch (err) {
+      toast.error(err.message);
+      throw err;
     }
-    throw new Error('Đăng nhập thất bại');
   };
 
   const signUp = async (userData) => {
-    const data = await register(userData);
-    return data;
+    try {
+      const data = await register(userData);
+      toast.success("Registration successful! Please sign in.");
+      return data;
+    } catch (err) {
+      toast.error(err.message);
+      throw err;
+    }
   };
 
   const signOut = () => {
     setToken(null);
     setUser(null);
     setIsAdmin(false);
+    toast.info("Logged out successfully.");
   };
 
   const updateProfile = async (updatedData) => {
-    const data = await updateUser(user.id, updatedData);
-    setUser(data);
-    setIsAdmin(data.role === 'Admin');
-    return data;
+    try {
+      const data = await updateUser(user.id, {
+        username: updatedData.username,
+        email: updatedData.email,
+        role: user.role,
+      });
+      setUser(data);
+      setIsAdmin(data.role === "Admin");
+      toast.success("Profile updated successfully!");
+      return data;
+    } catch (err) {
+      toast.error(err.message);
+      throw err;
+    }
   };
 
   return (
     <AuthContext.Provider value={{ user, loading, isAdmin, signIn, signUp, signOut, updateProfile }}>
-      {children}
+      {!loading && children}
     </AuthContext.Provider>
   );
 }
