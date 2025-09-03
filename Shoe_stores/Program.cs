@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using ShoeStoreBackend.Data;
+using ShoeStoreBackend.Models;
 using ShoeStoreBackend.Services;
 using System.Text;
 
@@ -18,8 +19,8 @@ builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<ICartService, CartService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IUserService, UserService>();
-builder.Services.AddScoped<IAuthService, AuthService>(); // Thêm AuthService
-builder.Services.AddHttpContextAccessor(); // Thêm để hỗ trợ IHttpContextAccessor
+builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddHttpContextAccessor();
 
 // ========= JWT AUTH =========
 builder.Services.AddAuthentication("Bearer")
@@ -45,7 +46,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowReactApp", policy =>
     {
-        policy.WithOrigins("http://localhost:3000") // FE React đang chạy
+        policy.WithOrigins("http://localhost:3000")
               .AllowAnyHeader()
               .AllowAnyMethod();
     });
@@ -56,8 +57,6 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "ShoeStore API", Version = "v1" });
-
-    // Add JWT Auth to Swagger
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Description = "JWT Authorization header. Example: 'Bearer {token}'",
@@ -66,7 +65,6 @@ builder.Services.AddSwaggerGen(c =>
         Type = SecuritySchemeType.ApiKey,
         Scheme = "Bearer"
     });
-
     c.AddSecurityRequirement(new OpenApiSecurityRequirement
     {
         {
@@ -83,11 +81,29 @@ builder.Services.AddControllers();
 
 var app = builder.Build();
 
+// ========= SEED DATABASE =========
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    try
+    {
+        await DbInitializer.InitializeAsync(db);
+        Console.ForegroundColor = ConsoleColor.Green;
+        Console.WriteLine("✅ Seeding cơ sở dữ liệu thành công!");
+        Console.ResetColor();
+    }
+    catch (Exception ex)
+    {
+        Console.ForegroundColor = ConsoleColor.Red;
+        Console.WriteLine("❌ Lỗi khi seeding cơ sở dữ liệu: " + ex.Message);
+        Console.ResetColor();
+    }
+}
+
 // ========= TEST KẾT NỐI MYSQL =========
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-
     try
     {
         if (await db.Database.CanConnectAsync())
@@ -119,12 +135,9 @@ app.UseSwaggerUI(c =>
 });
 
 app.UseHttpsRedirection();
-
-app.UseCors("AllowReactApp"); // Áp dụng CORS ở đây
-
+app.UseCors("AllowReactApp");
 app.UseAuthentication();
 app.UseAuthorization();
-
 app.MapControllers();
 
 app.Run();

@@ -1,3 +1,4 @@
+// (Giữ nguyên code từ user)
 import axios from "axios";
 import { getToken } from "./authService";
 
@@ -25,8 +26,6 @@ export async function addToCart(item) {
 export async function updateCart(productId, quantity) {
   const token = getToken();
   const res = await axios.put(`${API_BASE_URL}/${productId}`, quantity, {
-    headers: { Authorization: `Bearer ${token}` },
-    // .NET Core mặc định đọc int ở body => cần gửi dạng JSON số
     headers: {
       Authorization: `Bearer ${token}`,
       "Content-Type": "application/json"

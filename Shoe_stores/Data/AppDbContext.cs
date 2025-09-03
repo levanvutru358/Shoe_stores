@@ -30,18 +30,6 @@ namespace ShoeStoreBackend.Data
                 .HasOne(oi => oi.Product)
                 .WithMany()
                 .HasForeignKey(oi => oi.ProductId);
-
-            // Seed tài khoản admin mặc định
-            modelBuilder.Entity<User>().HasData(
-                new User
-                {
-                    Id = 1,
-                    Username = "admin",
-                    Email = "admin@shoestore.com",
-                    PasswordHash = "$2a$11$8Xz6Z6Z6Z6Z6Z6Z6Z6Z6Ze6Z6Z6Z6Z6Z6Z6Z6Z6Z6Z6Z6Z6Z6Z", // Mật khẩu: Admin@123 (đã mã hóa bằng BCrypt)
-                    Role = "Admin"
-                }
-            );
         }
     }
 }

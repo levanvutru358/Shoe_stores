@@ -63,25 +63,25 @@ namespace ShoeStoreBackend.Services
         }
 
         public async Task<object> GetCurrentUserAsync(string userId)
-        {
-            if (string.IsNullOrEmpty(userId))
-            {
-                throw new UnauthorizedAccessException("Không tìm thấy userId trong token.");
-            }
+{
+    if (string.IsNullOrEmpty(userId))
+    {
+        throw new UnauthorizedAccessException("Không tìm thấy userId trong token.");
+    }
 
-            var user = await _context.Users.FindAsync(int.Parse(userId));
-            if (user == null)
-            {
-                throw new BadHttpRequestException("Người dùng không tồn tại.");
-            }
+    var user = await _context.Users.FindAsync(int.Parse(userId));
+    if (user == null)
+    {
+        throw new BadHttpRequestException("Người dùng không tồn tại.");
+    }
 
-            return new
-            {
-                user.Id,
-                user.Username,
-                user.Email,
-                user.Role
-            };
-        }
+    return new
+    {
+        user.Id,
+        user.Username,
+        user.Email,
+        user.Role
+    };
+}
     }
 }

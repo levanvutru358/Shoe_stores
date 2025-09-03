@@ -20,16 +20,19 @@ export async function register(userData) {
 
 // Đăng nhập
 export async function login(credentials) {
-  const res = await axios.post(`${API_BASE_URL}/login`, credentials);
+  const res = await axios.post(`${API_BASE_URL}/login`, credentials, {
+    headers: { 'Content-Type': 'application/json' }
+  });
   if (res.data.token) {
     setToken(res.data.token);
   }
-  return res.data;
+  return res.data; // Trả về { token }
 }
 
 // Lấy thông tin user hiện tại
 export async function getCurrentUser() {
   const token = getToken();
+  if (!token) throw new Error('No token available');
   const res = await axios.get(`${API_BASE_URL}/me`, {
     headers: { Authorization: `Bearer ${token}` }
   });

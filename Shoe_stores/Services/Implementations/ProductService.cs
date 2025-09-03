@@ -28,16 +28,19 @@ namespace ShoeStoreBackend.Services
         }
 
         // READ: Cả User và Admin đều có thể truy cập
-        public async Task<IEnumerable<ProductDto>> GetAllAsync(string? search)
+            public async Task<IEnumerable<ProductDto>> GetAllAsync(string? search)
         {
             var query = _context.Products.AsQueryable();
 
-            if (!string.IsNullOrEmpty(search))
+            if (!string.IsNullOrWhiteSpace(search))
             {
+                search = search.ToLower(); // chuẩn hóa chữ thường
+
                 query = query.Where(p =>
-                    p.Name.Contains(search) ||
-                    p.Description.Contains(search) ||
-                    p.Category.Contains(search));
+                    p.Name.ToLower().Contains(search) ||
+                    p.Description.ToLower().Contains(search) ||
+                    p.Category.ToLower().Contains(search)
+                );
             }
 
             return await query.Select(p => new ProductDto
