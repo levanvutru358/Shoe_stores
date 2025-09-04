@@ -1,68 +1,119 @@
-import { useContext } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import AuthContext from "../contexts/AuthContext";
-import CartContext from "../contexts/CartContext";
+import { Link } from 'react-router-dom';
+import { useContext, useState } from 'react';
+import AuthContext from '../contexts/AuthContext';
 
 function Header() {
-  const { user, signOut } = useContext(AuthContext);
-  const { cart } = useContext(CartContext);
-  const navigate = useNavigate();
+  const { user, isAdmin, signOut } = useContext(AuthContext);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  const handleSignOut = () => {
-    signOut();
-    navigate("/");
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
   };
 
   return (
-    <header className="bg-blue-600 text-white shadow-lg">
-      <div className="container mx-auto flex justify-between items-center py-4 px-4 sm:px-6 lg:px-8">
-        <Link to="/" className="text-2xl font-bold tracking-tight hover:text-blue-200 transition-colors duration-200">
-          Shoe Store
-        </Link>
-        <nav className="flex space-x-4 sm:space-x-6 items-center">
-          <Link to="/" className="hover:text-blue-200 transition-colors duration-200">
+    <header className="bg-gradient-to-r from-gray-900 to-gray-800 text-white sticky top-0 z-50 shadow-lg">
+      <div className="container py-4 flex justify-between items-center">
+        {/* Logo */}
+        <h1 className="text-2xl font-bold tracking-tight">
+          <Link to="/" className="hover:text-indigo-400 transition-colors duration-300">
+            Shoe Haven
+          </Link>
+        </h1>
+        {/* Desktop Navigation */}
+        <nav className="hidden md:flex items-center space-x-6">
+          <Link to="/" className="text-gray-200 hover:text-indigo-400 transition-colors duration-300">
             Home
           </Link>
-          <Link to="/cart" className="relative hover:text-blue-200 transition-colors duration-200">
+          <Link to="/cart" className="text-gray-200 hover:text-indigo-400 transition-colors duration-300">
             Cart
-            {cart.length > 0 && (
-              <span className="absolute -top-2 -right-3 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs">
-                {cart.length}
-              </span>
-            )}
           </Link>
           {user ? (
             <>
-              <Link to="/profile" className="hover:text-blue-200 transition-colors duration-200">
+              <Link to="/profile" className="text-gray-200 hover:text-indigo-400 transition-colors duration-300">
                 Profile
               </Link>
-              <Link to="/orders" className="hover:text-blue-200 transition-colors duration-200">
+              <Link to="/orders" className="text-gray-200 hover:text-indigo-400 transition-colors duration-300">
                 Orders
               </Link>
-              {user.role === "Admin" && (
-                <Link to="/admin" className="hover:text-blue-200 transition-colors duration-200">
+              {isAdmin && (
+                <Link to="/admin" className="text-gray-200 hover:text-indigo-400 transition-colors duration-300">
                   Admin
                 </Link>
               )}
               <button
-                onClick={handleSignOut}
-                className="hover:text-blue-200 transition-colors duration-200"
+                onClick={signOut}
+                className="text-gray-200 hover:text-indigo-400 transition-colors duration-300"
               >
-                Sign Out
+                Logout
               </button>
             </>
           ) : (
             <>
-              <Link to="/login" className="hover:text-blue-200 transition-colors duration-200">
-                Sign In
+              <Link to="/login" className="text-gray-200 hover:text-indigo-400 transition-colors duration-300">
+                Login
               </Link>
-              <Link to="/register" className="hover:text-blue-200 transition-colors duration-200">
-                Sign Up
+              <Link to="/register" className="text-gray-200 hover:text-indigo-400 transition-colors duration-300">
+                Register
               </Link>
             </>
           )}
         </nav>
+        {/* Cart Icon & Hamburger */}
+        <div className="flex items-center space-x-4">
+          <Link to="/cart" className="text-gray-200 hover:text-indigo-400 transition-colors duration-300">
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"
+              />
+            </svg>
+          </Link>
+          <button
+            className="md:hidden text-gray-200 hover:text-indigo-400 transition-colors duration-300"
+            onClick={toggleMenu}
+            aria-label="Toggle menu"
+          >
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d={isMenuOpen ? 'M6 18L18 6M6 6l12 12' : 'M4 6h16M4 12h16M4 18h16'}
+              />
+            </svg>
+          </button>
+        </div>
       </div>
+      {/* Mobile Navigation */}
+      {isMenuOpen && (
+        <nav className="md:hidden bg-gray-800 px-4 py-6">
+          <div className="flex flex-col space-y-4">
+            {['Home', 'Cart', ...(user ? ['Profile', 'Orders', ...(isAdmin ? ['Admin'] : [])] : ['Login', 'Register'])].map((item) => (
+              <Link
+                key={item}
+                to={`/${item.toLowerCase()}`}
+                className="text-gray-200 hover:text-indigo-400 transition-colors duration-300"
+                onClick={toggleMenu}
+              >
+                {item}
+              </Link>
+            ))}
+            {user && (
+              <button
+                onClick={() => {
+                  signOut();
+                  toggleMenu();
+                }}
+                className="text-gray-200 hover:text-indigo-400 text-left transition-colors duration-300"
+              >
+                Logout
+              </button>
+            )}
+          </div>
+        </nav>
+      )}
     </header>
   );
 }
