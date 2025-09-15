@@ -4,6 +4,7 @@ using Microsoft.OpenApi.Models;
 using ShoeStoreBackend.Data;
 using ShoeStoreBackend.Models;
 using ShoeStoreBackend.Services;
+using ShoeStoreBackend.Services.Implementations;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -20,6 +21,7 @@ builder.Services.AddScoped<ICartService, CartService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<ICommentService, CommentService>(); // Đã thêm dịch vụ Comment
 builder.Services.AddHttpContextAccessor();
 
 // ========= JWT AUTH =========
