@@ -248,4 +248,34 @@ public class OrderService : IOrderService
 
         return result;
     }
+
+    public async Task<List<CategoryRevenueDto>> GetRevenueByCategoryAsync(DateTime? startDate, DateTime? endDate)
+    {
+        var query = _context.OrderItems
+            .Include(oi => oi.Product)
+            .Include(oi => oi.Order)
+            .AsQueryable();
+
+        if (startDate.HasValue)
+        {
+            query = query.Where(oi => oi.Order.OrderDate >= startDate.Value);
+        }
+        if (endDate.HasValue)
+        {
+            query = query.Where(oi => oi.Order.OrderDate < endDate.Value);
+        }
+
+        var list = await query
+            .GroupBy(oi => oi.Product.Category)
+            .Select(g => new CategoryRevenueDto
+            {
+                Category = g.Key ?? "Uncategorized",
+                TotalQuantity = g.Sum(x => x.Quantity),
+                TotalRevenue = g.Sum(x => x.Price * x.Quantity)
+            })
+            .OrderByDescending(x => x.TotalRevenue)
+            .ToListAsync();
+
+        return list;
+    }
 }

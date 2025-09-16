@@ -110,4 +110,15 @@ public class OrderController : ControllerBase
         var results = await _orderService.GetTopCustomersAsync(top, startDate, endDate);
         return Ok(results);
     }
+
+    // Admin: Revenue by category (for charts)
+    [HttpGet("admin/revenue-by-category")]
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> GetRevenueByCategory(
+        [FromQuery] DateTime? startDate = null,
+        [FromQuery] DateTime? endDate = null)
+    {
+        var results = await _orderService.GetRevenueByCategoryAsync(startDate, endDate);
+        return Ok(results);
+    }
 }
