@@ -82,4 +82,37 @@ public class OrderService : IOrderService
             }).ToList()
         }).ToList();
     }
+
+    public async Task<decimal> GetRevenueByDayAsync(DateTime date)
+    {
+        var start = date.Date;
+        var end = start.AddDays(1);
+        var sum = await _context.Orders
+            .Where(o => o.OrderDate >= start && o.OrderDate < end)
+            .Select(o => (decimal?)o.TotalAmount)
+            .SumAsync();
+        return sum ?? 0m;
+    }
+
+    public async Task<decimal> GetRevenueByMonthAsync(int year, int month)
+    {
+        var start = new DateTime(year, month, 1);
+        var end = start.AddMonths(1);
+        var sum = await _context.Orders
+            .Where(o => o.OrderDate >= start && o.OrderDate < end)
+            .Select(o => (decimal?)o.TotalAmount)
+            .SumAsync();
+        return sum ?? 0m;
+    }
+
+    public async Task<decimal> GetRevenueByYearAsync(int year)
+    {
+        var start = new DateTime(year, 1, 1);
+        var end = start.AddYears(1);
+        var sum = await _context.Orders
+            .Where(o => o.OrderDate >= start && o.OrderDate < end)
+            .Select(o => (decimal?)o.TotalAmount)
+            .SumAsync();
+        return sum ?? 0m;
+    }
 }

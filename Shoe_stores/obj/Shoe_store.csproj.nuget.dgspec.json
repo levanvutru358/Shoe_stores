@@ -1,27 +1,25 @@
 {
   "format": 1,
   "restore": {
-    "F:\\DATN\\Shoe_stores\\Shoe_store.csproj": {}
+    "D:\\year3\\thuctap\\demo1\\Shoe_stores\\Shoe_store.csproj": {}
   },
   "projects": {
-    "F:\\DATN\\Shoe_stores\\Shoe_store.csproj": {
+    "D:\\year3\\thuctap\\demo1\\Shoe_stores\\Shoe_store.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "F:\\DATN\\Shoe_stores\\Shoe_store.csproj",
+        "projectUniqueName": "D:\\year3\\thuctap\\demo1\\Shoe_stores\\Shoe_store.csproj",
         "projectName": "Shoe_store",
-        "projectPath": "F:\\DATN\\Shoe_stores\\Shoe_store.csproj",
-        "packagesPath": "C:\\Users\\VIP\\.nuget\\packages\\",
-        "outputPath": "F:\\DATN\\Shoe_stores\\obj\\",
+        "projectPath": "D:\\year3\\thuctap\\demo1\\Shoe_stores\\Shoe_store.csproj",
+        "packagesPath": "C:\\Users\\VU TRU\\.nuget\\packages\\",
+        "outputPath": "D:\\year3\\thuctap\\demo1\\Shoe_stores\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\VIP\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+          "C:\\Users\\VU TRU\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net9.0"
         ],
         "sources": {
-          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -75,6 +73,10 @@
             "Pomelo.EntityFrameworkCore.MySql": {
               "target": "Package",
               "version": "[8.0.3, )"
+            },
+            "Scalar.AspNetCore": {
+              "target": "Package",
+              "version": "[1.2.9, )"
             },
             "Swashbuckle.AspNetCore": {
               "target": "Package",

@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Scalar.AspNetCore;
 using ShoeStoreBackend.Data;
 using ShoeStoreBackend.Models;
 using ShoeStoreBackend.Services;
@@ -78,6 +79,8 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 builder.Services.AddControllers();
+// ========= OPENAPI (for Scalar UI) =========
+builder.Services.AddOpenApi();
 
 var app = builder.Build();
 
@@ -133,6 +136,10 @@ app.UseSwaggerUI(c =>
 {
     c.SwaggerEndpoint("/swagger/v1/swagger.json", "ShoeStore API V1");
 });
+
+// Map OpenAPI and Scalar UI (helpful for testing)
+app.MapOpenApi(); // serves /openapi/v1.json
+app.MapScalarApiReference(); // serves UI at /scalar/v1
 
 app.UseHttpsRedirection();
 app.UseCors("AllowReactApp");
