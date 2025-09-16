@@ -84,4 +84,17 @@ public class OrderController : ControllerBase
         var orders = await _orderService.GetOrdersByStatusAsync(status);
         return Ok(orders);
     }
+
+    // Admin: Top selling products
+    [HttpGet("admin/top-products")]
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> GetTopSellingProducts(
+        [FromQuery] int top = 10,
+        [FromQuery] DateTime? startDate = null,
+        [FromQuery] DateTime? endDate = null)
+    {
+        if (top <= 0) return BadRequest(new { message = "'top' must be > 0." });
+        var results = await _orderService.GetTopSellingProductsAsync(top, startDate, endDate);
+        return Ok(results);
+    }
 }

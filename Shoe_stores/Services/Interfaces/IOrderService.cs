@@ -7,4 +7,5 @@ public interface IOrderService
     Task<decimal> GetRevenueByYearAsync(int year);
     Task<List<OrderStatusSummaryDto>> GetOrderStatusSummaryAsync();
     Task<List<OrderResponseDto>> GetOrdersByStatusAsync(string status);
+    Task<List<TopProductDto>> GetTopSellingProductsAsync(int top, DateTime? startDate, DateTime? endDate);
 }

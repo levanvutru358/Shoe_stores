@@ -158,4 +158,41 @@ public class OrderService : IOrderService
             }).ToList()
         }).ToList();
     }
+
+    public async Task<List<TopProductDto>> GetTopSellingProductsAsync(int top, DateTime? startDate, DateTime? endDate)
+    {
+        if (top <= 0) top = 10;
+
+        var query = _context.OrderItems
+            .Include(oi => oi.Product)
+            .Include(oi => oi.Order)
+            .AsQueryable();
+
+        if (startDate.HasValue)
+        {
+            query = query.Where(oi => oi.Order.OrderDate >= startDate.Value);
+        }
+        if (endDate.HasValue)
+        {
+            query = query.Where(oi => oi.Order.OrderDate < endDate.Value);
+        }
+
+        var results = await query
+            .GroupBy(oi => new { oi.ProductId, oi.Product.Name, oi.Product.ImageUrl, oi.Product.Category })
+            .Select(g => new TopProductDto
+            {
+                ProductId = g.Key.ProductId,
+                Name = g.Key.Name,
+                ImageUrl = g.Key.ImageUrl,
+                Category = g.Key.Category,
+                TotalQuantity = g.Sum(x => x.Quantity),
+                TotalRevenue = g.Sum(x => x.Price * x.Quantity)
+            })
+            .OrderByDescending(x => x.TotalQuantity)
+            .ThenByDescending(x => x.TotalRevenue)
+            .Take(top)
+            .ToListAsync();
+
+        return results;
+    }
 }
