@@ -5,4 +5,6 @@ public interface IOrderService
     Task<decimal> GetRevenueByDayAsync(DateTime date);
     Task<decimal> GetRevenueByMonthAsync(int year, int month);
     Task<decimal> GetRevenueByYearAsync(int year);
+    Task<List<OrderStatusSummaryDto>> GetOrderStatusSummaryAsync();
+    Task<List<OrderResponseDto>> GetOrdersByStatusAsync(string status);
 }

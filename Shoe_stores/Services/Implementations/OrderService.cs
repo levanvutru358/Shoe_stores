@@ -48,6 +48,7 @@ public class OrderService : IOrderService
             Id = order.Id,
             OrderDate = order.OrderDate,
             PaymentMethod = order.PaymentMethod,
+            Status = order.Status,
             TotalAmount = order.TotalAmount,
             Items = order.OrderItems.Select(oi => new OrderItemDto
             {
@@ -73,6 +74,7 @@ public class OrderService : IOrderService
             OrderDate = order.OrderDate,
             TotalAmount = order.TotalAmount,
             PaymentMethod = order.PaymentMethod,
+            Status = order.Status,
             Items = order.OrderItems.Select(oi => new OrderItemDto
             {
                 ProductId = oi.ProductId,
@@ -114,5 +116,46 @@ public class OrderService : IOrderService
             .Select(o => (decimal?)o.TotalAmount)
             .SumAsync();
         return sum ?? 0m;
+    }
+
+    public async Task<List<OrderStatusSummaryDto>> GetOrderStatusSummaryAsync()
+    {
+        var summaries = await _context.Orders
+            .GroupBy(o => o.Status)
+            .Select(g => new OrderStatusSummaryDto
+            {
+                Status = g.Key,
+                Count = g.Count(),
+                TotalAmount = g.Sum(o => o.TotalAmount)
+            })
+            .ToListAsync();
+
+        return summaries;
+    }
+
+    public async Task<List<OrderResponseDto>> GetOrdersByStatusAsync(string status)
+    {
+        var normalized = status.Trim();
+        var orders = await _context.Orders
+            .Include(o => o.OrderItems)
+            .ThenInclude(oi => oi.Product)
+            .Where(o => o.Status == normalized)
+            .ToListAsync();
+
+        return orders.Select(order => new OrderResponseDto
+        {
+            Id = order.Id,
+            OrderDate = order.OrderDate,
+            TotalAmount = order.TotalAmount,
+            PaymentMethod = order.PaymentMethod,
+            Status = order.Status,
+            Items = order.OrderItems.Select(oi => new OrderItemDto
+            {
+                ProductId = oi.ProductId,
+                ProductName = oi.Product?.Name,
+                Quantity = oi.Quantity,
+                Price = oi.Price
+            }).ToList()
+        }).ToList();
     }
 }

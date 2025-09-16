@@ -63,4 +63,25 @@ public class OrderController : ControllerBase
         var total = await _orderService.GetRevenueByYearAsync(year);
         return Ok(new { period = $"{year:D4}", totalRevenue = total });
     }
+
+    // Admin: Order status summary
+    [HttpGet("admin/status-summary")]
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> GetOrderStatusSummary()
+    {
+        var summary = await _orderService.GetOrderStatusSummaryAsync();
+        return Ok(summary);
+    }
+
+    // Admin: List orders by status
+    [HttpGet("admin/by-status")]
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> GetOrdersByStatus([FromQuery] string? status)
+    {
+        if (string.IsNullOrWhiteSpace(status))
+            return BadRequest(new { message = "Missing 'status' query param." });
+
+        var orders = await _orderService.GetOrdersByStatusAsync(status);
+        return Ok(orders);
+    }
 }
