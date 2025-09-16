@@ -8,4 +8,5 @@ public interface IOrderService
     Task<List<OrderStatusSummaryDto>> GetOrderStatusSummaryAsync();
     Task<List<OrderResponseDto>> GetOrdersByStatusAsync(string status);
     Task<List<TopProductDto>> GetTopSellingProductsAsync(int top, DateTime? startDate, DateTime? endDate);
+    Task<List<LoyalCustomerDto>> GetTopCustomersAsync(int top, DateTime? startDate, DateTime? endDate);
 }

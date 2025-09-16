@@ -97,4 +97,17 @@ public class OrderController : ControllerBase
         var results = await _orderService.GetTopSellingProductsAsync(top, startDate, endDate);
         return Ok(results);
     }
+
+    // Admin: Loyal customers (top customers by total spent)
+    [HttpGet("admin/top-customers")]
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> GetTopCustomers(
+        [FromQuery] int top = 10,
+        [FromQuery] DateTime? startDate = null,
+        [FromQuery] DateTime? endDate = null)
+    {
+        if (top <= 0) return BadRequest(new { message = "'top' must be > 0." });
+        var results = await _orderService.GetTopCustomersAsync(top, startDate, endDate);
+        return Ok(results);
+    }
 }

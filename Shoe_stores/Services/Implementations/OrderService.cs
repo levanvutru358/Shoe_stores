@@ -195,4 +195,57 @@ public class OrderService : IOrderService
 
         return results;
     }
+
+    public async Task<List<LoyalCustomerDto>> GetTopCustomersAsync(int top, DateTime? startDate, DateTime? endDate)
+    {
+        if (top <= 0) top = 10;
+
+        var itemQuery = _context.OrderItems
+            .Include(oi => oi.Order)
+            .AsQueryable();
+
+        if (startDate.HasValue)
+        {
+            itemQuery = itemQuery.Where(oi => oi.Order.OrderDate >= startDate.Value);
+        }
+        if (endDate.HasValue)
+        {
+            itemQuery = itemQuery.Where(oi => oi.Order.OrderDate < endDate.Value);
+        }
+
+        // Group by customer through Order.UserId
+        var grouped = await itemQuery
+            .GroupBy(oi => oi.Order.UserId)
+            .Select(g => new
+            {
+                UserId = g.Key,
+                TotalQuantity = g.Sum(x => x.Quantity),
+                TotalSpent = g.Sum(x => x.Price * x.Quantity),
+                TotalOrders = g.Select(x => x.OrderId).Distinct().Count(),
+                LastOrderDate = g.Max(x => x.Order.OrderDate)
+            })
+            .OrderByDescending(x => x.TotalSpent)
+            .ThenByDescending(x => x.TotalOrders)
+            .Take(top)
+            .ToListAsync();
+
+        // Join with Users to fetch display info
+        var userIds = grouped.Select(x => x.UserId).ToList();
+        var users = await _context.Users
+            .Where(u => userIds.Contains(u.Id))
+            .ToDictionaryAsync(u => u.Id, u => u);
+
+        var result = grouped.Select(x => new LoyalCustomerDto
+        {
+            UserId = x.UserId,
+            Username = users.TryGetValue(x.UserId, out var u) ? u.Username : string.Empty,
+            Email = users.TryGetValue(x.UserId, out var u2) ? u2.Email : string.Empty,
+            TotalOrders = x.TotalOrders,
+            TotalQuantity = x.TotalQuantity,
+            TotalSpent = x.TotalSpent,
+            LastOrderDate = x.LastOrderDate
+        }).ToList();
+
+        return result;
+    }
 }
