@@ -2,12 +2,19 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using ShoeStoreBackend.Data;
-using ShoeStoreBackend.Models;
 using ShoeStoreBackend.Services;
 using ShoeStoreBackend.Services.Implementations;
+using ShoeStoreBackend.Services.Interfaces;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// ========= LOAD CONFIG =========
+builder.Configuration
+    .SetBasePath(Directory.GetCurrentDirectory())
+    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+    .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true)
+    .AddEnvironmentVariables();
 
 // ========= DATABASE =========
 builder.Services.AddDbContext<AppDbContext>(options =>
@@ -21,7 +28,8 @@ builder.Services.AddScoped<ICartService, CartService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
-builder.Services.AddScoped<ICommentService, CommentService>(); // Đã thêm dịch vụ Comment
+builder.Services.AddScoped<ICommentService, CommentService>();
+builder.Services.AddScoped<IPaymentService, PaymentService>();
 builder.Services.AddHttpContextAccessor();
 
 // ========= JWT AUTH =========

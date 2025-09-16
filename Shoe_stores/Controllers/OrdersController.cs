@@ -1,33 +1,51 @@
-using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using ShoeStoreBackend.DTOs;
+using ShoeStoreBackend.Services.Interfaces;
+using System.Security.Claims;
+using System.Threading.Tasks;
 
-[ApiController]
-[Route("api/orders")]
-public class OrderController : ControllerBase
+namespace ShoeStoreBackend.Controllers
 {
-    private readonly IOrderService _orderService;
-
-    public OrderController(IOrderService orderService)
+    [ApiController]
+    [Route("api/orders")]
+    public class OrdersController : ControllerBase
     {
-        _orderService = orderService;
-    }
+        private readonly IOrderService _orderService;
 
-    [HttpPost]
-    [Authorize]
-    public async Task<IActionResult> PlaceOrder([FromBody] OrderRequestDto request)
-    {
-        var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
-        var result = await _orderService.PlaceOrderAsync(userId, request);
-        return Ok(result);
-    }
+        public OrdersController(IOrderService orderService)
+        {
+            _orderService = orderService ?? throw new ArgumentNullException(nameof(orderService));
+        }
 
-    [HttpGet]
-    [Authorize]
-    public async Task<IActionResult> GetUserOrders()
-    {
-        var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
-        var orders = await _orderService.GetUserOrdersAsync(userId);
-        return Ok(orders);
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> PlaceOrder([FromBody] OrderRequestDto request)
+        {
+            if (request == null || string.IsNullOrEmpty(request.PaymentMethod))
+            {
+                return BadRequest(new { message = "Payment method is required." });
+            }
+
+            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier) ?? throw new Exception("User ID is null"));
+            try
+            {
+                var result = await _orderService.PlaceOrderAsync(userId, request);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> GetUserOrders()
+        {
+            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier) ?? throw new Exception("User ID is null"));
+            var orders = await _orderService.GetUserOrdersAsync(userId);
+            return Ok(orders);
+        }
     }
 }
