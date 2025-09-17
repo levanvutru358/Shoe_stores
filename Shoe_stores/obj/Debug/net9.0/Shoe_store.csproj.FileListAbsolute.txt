@@ -233,3 +233,7 @@ F:\DATN\Shoe_stores\obj\Debug\net9.0\Shoe_store.pdb
 F:\DATN\Shoe_stores\obj\Debug\net9.0\Shoe_store.genruntimeconfig.cache
 F:\DATN\Shoe_stores\obj\Debug\net9.0\ref\Shoe_store.dll
 F:\DATN\Shoe_stores\bin\Debug\net9.0\Shoe_store.staticwebassets.runtime.json
+F:\DATN\Shoe_stores\bin\Debug\net9.0\Newtonsoft.Json.dll
+F:\DATN\Shoe_stores\bin\Debug\net9.0\Stripe.net.dll
+F:\DATN\Shoe_stores\bin\Debug\net9.0\System.Configuration.ConfigurationManager.dll
+F:\DATN\Shoe_stores\bin\Debug\net9.0\System.Security.Cryptography.ProtectedData.dll
