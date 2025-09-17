@@ -1,8 +1,8 @@
 import { useState, useContext } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { FaUser, FaEnvelope, FaLock } from 'react-icons/fa';
 import AuthContext from '../contexts/AuthContext';
 import { toast } from 'react-toastify';
+import "./index.css"; // Tạo file riêng cho trang này
 
 function Register() {
   const [userData, setUserData] = useState({ username: '', email: '', password: '' });
@@ -24,67 +24,64 @@ function Register() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-100 via-blue-100 to-gray-100 flex items-center justify-center py-12">
-      <div className="w-full max-w-md bg-white p-8 rounded-2xl shadow-lg">
-        <h2 className="text-3xl font-bold text-center text-gray-800 mb-8">
-          Sign Up
-        </h2>
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div>
-            <label className="block text-sm font-medium text-gray-600 mb-2">Username</label>
-            <div className="relative">
-              <FaUser className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
-              <input
-                type="text"
-                name="username"
-                value={userData.username}
-                onChange={handleChange}
-                placeholder="Enter your username"
-                className="input-field pl-12"
-                required
-              />
-            </div>
+    <div className="register-page">
+      {/* Bên trái: logo + slogan */}
+      <div className="register-left">
+        <img src="/123.png" alt="Logo" className="register-logo" /> 
+        {/* <h1 className="brand-name">ShoeStore</h1>
+        <p className="brand-slogan">Nền tảng mua sắm giày uy tín hàng đầu</p> */}
+      </div>
+
+      {/* Bên phải: form */}
+      <div className="register-right">
+        <div className="register-card">
+          <h2 className="register-title">Đăng ký</h2>
+
+          <form onSubmit={handleSubmit}>
+            <input
+              type="text"
+              name="username"
+              value={userData.username}
+              onChange={handleChange}
+              placeholder="Tên đăng nhập"
+              className="register-input"
+              required
+            />
+
+            <input
+              type="email"
+              name="email"
+              value={userData.email}
+              onChange={handleChange}
+              placeholder="Email"
+              className="register-input"
+              required
+            />
+
+            <input
+              type="password"
+              name="password"
+              value={userData.password}
+              onChange={handleChange}
+              placeholder="Mật khẩu"
+              className="register-input"
+              required
+            />
+
+            <button type="submit" className="register-btn">Đăng ký</button>
+          </form>
+
+          <div className="register-divider">Hoặc</div>
+
+          <div className="social-login">
+            <button className="btn-social facebook">Facebook</button>
+            <button className="btn-social google">Google</button>
           </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-600 mb-2">Email</label>
-            <div className="relative">
-              <FaEnvelope className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
-              <input
-                type="email"
-                name="email"
-                value={userData.email}
-                onChange={handleChange}
-                placeholder="Enter your email"
-                className="input-field pl-12"
-                required
-              />
-            </div>
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-600 mb-2">Password</label>
-            <div className="relative">
-              <FaLock className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
-              <input
-                type="password"
-                name="password"
-                value={userData.password}
-                onChange={handleChange}
-                placeholder="Enter your password"
-                className="input-field pl-12"
-                required
-              />
-            </div>
-          </div>
-          <button type="submit" className="btn-primary w-full">
-            Sign Up
-          </button>
-        </form>
-        <p className="text-sm text-gray-600 text-center mt-6">
-          Already have an account?{' '}
-          <Link to="/login" className="text-indigo-600 hover:text-indigo-700 font-medium">
-            Sign In
-          </Link>
-        </p>
+
+          <p className="register-footer">
+            Bạn đã có tài khoản? <Link to="/login">Đăng nhập</Link>
+          </p>
+        </div>
       </div>
     </div>
   );

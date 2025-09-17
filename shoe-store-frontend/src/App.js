@@ -10,7 +10,8 @@ import Cart from './pages/Cart';
 import Checkout from './pages/Checkout';
 import Orders from './pages/Orders';
 import Profile from './pages/Profile';
-import AdminPanel from './pages/AdminPanel';
+import AdminPanel from './Admin/AdminPanel';
+import ProductDetail from './pages/ProductDetail';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import './index.css'; // Thay App.css bằng index.css
@@ -31,6 +32,8 @@ function App() {
               <Route path="/orders" element={<Orders />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/admin" element={<AdminPanel />} />
+              <Route path="/productdetail" element={<ProductDetail />} />
+              <Route path="/products/:id" element={<ProductDetail />} />
             </Routes>
           </main>
           <Footer />

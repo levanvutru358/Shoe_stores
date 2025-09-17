@@ -1,50 +1,52 @@
-import { Link } from 'react-router-dom';
+import React from "react";
+import "./index.css";
 
 function Footer() {
   return (
-    <footer className="bg-gray-900 text-gray-200 py-10">
-      <div className="container grid grid-cols-1 md:grid-cols-3 gap-8 text-center md:text-left">
-        {/* Logo & Description */}
-        <div>
-          <h3 className="text-xl font-bold mb-4 hover:text-indigo-400 transition-colors duration-300">
-            Shoe Haven
-          </h3>
-          <p className="text-gray-400">
-            Your one-stop shop for stylish, high-quality footwear.
+    <footer className="footer">
+      <div className="footer-top">
+        <div className="footer-col logo-col">
+          <h2 className="footer-logo">ShoeStore</h2>
+          <p className="footer-desc">
+            Chuyên cung cấp các loại giày Nike, Adidas, MLB và phụ kiện thời trang.
+            Uy tín - Chất lượng - Giá tốt.
           </p>
         </div>
-        {/* Navigation Links */}
-        <div>
-          <h4 className="text-lg font-semibold mb-4 hover:text-indigo-400 transition-colors duration-300">
-            Quick Links
-          </h4>
-          <ul className="space-y-2">
-            {['Home', 'Cart', 'Profile', 'Orders'].map((item) => (
-              <li key={item}>
-                <Link
-                  to={`/${item.toLowerCase()}`}
-                  className="text-gray-400 hover:text-indigo-400 transition-colors duration-300"
-                >
-                  {item}
-                </Link>
-              </li>
-            ))}
+
+        <div className="footer-col">
+          <h3>Danh mục</h3>
+          <ul>
+            <li><a href="/nike">Giày Nike</a></li>
+            <li><a href="/adidas">Giày Adidas</a></li>
+            <li><a href="/mlb">Giày MLB</a></li>
+            <li><a href="/phu-kien">Phụ kiện</a></li>
           </ul>
         </div>
-        {/* Contact Info */}
-        <div>
-          <h4 className="text-lg font-semibold mb-4 hover:text-indigo-400 transition-colors duration-300">
-            Contact Us
-          </h4>
-          <p className="text-gray-400 mb-2">Email: support@shoehaven.vn</p>
-          <p className="text-gray-400 mb-2">Phone: +84 123 456 789</p>
-          <p className="text-gray-400">Address: 123 Shoe Street, Ho Chi Minh City</p>
+
+        <div className="footer-col">
+          <h3>Hỗ trợ</h3>
+          <ul>
+            <li><a href="/huong-dan">Hướng dẫn mua hàng</a></li>
+            <li><a href="/chinh-sach">Chính sách đổi trả</a></li>
+            <li><a href="/bao-hanh">Chính sách bảo hành</a></li>
+            <li><a href="/lien-he">Liên hệ</a></li>
+          </ul>
+        </div>
+
+        <div className="footer-col">
+          <h3>Liên hệ</h3>
+          <p>Hotline: 0123 456 789</p>
+          <p>Email: support@shoestore.com</p>
+          <div className="socials">
+            <a href="#"><i className="fab fa-facebook"></i></a>
+            <a href="#"><i className="fab fa-instagram"></i></a>
+            <a href="#"><i className="fab fa-twitter"></i></a>
+          </div>
         </div>
       </div>
-      <div className="mt-8 text-center border-t border-gray-800 pt-4">
-        <p className="text-gray-400">
-          &copy; 2025 Shoe Haven. All rights reserved.
-        </p>
+
+      <div className="footer-bottom">
+        <p>© 2025 ShoeStore. All rights reserved.</p>
       </div>
     </footer>
   );

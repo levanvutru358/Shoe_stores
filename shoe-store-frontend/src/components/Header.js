@@ -1,117 +1,121 @@
-import { Link } from 'react-router-dom';
-import { useContext, useState } from 'react';
-import AuthContext from '../contexts/AuthContext';
+import { Link } from "react-router-dom";
+import { useContext, useState } from "react";
+import AuthContext from "../contexts/AuthContext";
+import CartContext from "../contexts/CartContext"; // 🔥 Thêm
+import { ShoppingCart, Menu, X } from "lucide-react";
+import "./index.css";
 
 function Header() {
+  const [search, setSearch] = useState('');
   const { user, isAdmin, signOut } = useContext(AuthContext);
+  const { cart } = useContext(CartContext); // 🔥 Lấy giỏ hàng từ context
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  // Tính tổng số lượng
+  const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
 
   return (
-    <header className="bg-gradient-to-r from-gray-900 to-gray-800 text-white sticky top-0 z-50 shadow-lg">
-      <div className="container py-4 flex justify-between items-center">
+    <header className="header">
+      {/* Top bar */}
+      <div className="top-bar">Hotline: 0123 456 789</div>
+
+      {/* Main header */}
+      <div className="header-container">
         {/* Logo */}
-        <h1 className="text-2xl font-bold tracking-tight">
-          <Link to="/" className="hover:text-indigo-400 transition-colors duration-300">
-            Shoe Haven
-          </Link>
-        </h1>
+        <Link to="/" className="logo">
+          <img src="/111.jpg" alt="" />
+          <span>ShoeStore</span>
+        </Link>
+
         {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center space-x-6">
-          <Link to="/" className="text-gray-200 hover:text-indigo-400 transition-colors duration-300">
-            Home
+        <nav className="nav-menu">
+          <Link to="/nike">GIÀY NIKE</Link>
+          <Link to="/adidas">GIÀY ADIDAS</Link>
+          <Link to="/mlb">GIÀY MLB</Link>
+          <Link to="/phu-kien">PHỤ KIỆN</Link>
+          <Link to="/tin-tuc">TIN TỨC</Link>
+          <Link to="/lien-he">LIÊN HỆ</Link>
+          {user && (
+            <>
+              <Link to="/profile">Profile</Link>
+              <Link to="/orders">Orders</Link>
+              {isAdmin && <Link to="/admin">Admin</Link>}
+            </>
+          )}
+        </nav>
+
+        {/* Right side */}
+        <div className="header-right">
+          {/* Search */}
+          <input
+            type="text"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search for shoes..."
+            className="input-field"
+            style={{ maxWidth: '400px', width: '100%' }}
+          />
+
+{/* Auth */}
+{user ? (
+  <button onClick={signOut} className="btn-auth logout">
+    Đăng xuất
+  </button>
+) : (
+  <div className="auth-buttons">
+    <Link to="/login" className="btn-auth login">Đăng nhập</Link>
+    <Link to="/register" className="btn-auth register">Đăng ký</Link>
+  </div>
+)}
+
+
+          {/* Cart */}
+          <Link to="/cart" className="cart-icon">
+            <ShoppingCart size={22} />
+            <span className="cart-count">{cartCount}</span>
           </Link>
-          <Link to="/cart" className="text-gray-200 hover:text-indigo-400 transition-colors duration-300">
-            Cart
-          </Link>
+
+          {/* Mobile menu button */}
+          <button className="menu-btn" onClick={toggleMenu} aria-label="Toggle menu">
+            {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
+        </div>
+      </div>
+
+      {/* Mobile Navigation */}
+      {isMenuOpen && (
+        <nav className="mobile-menu">
+          <Link to="/nike" onClick={toggleMenu}>GIÀY NIKE</Link>
+          <Link to="/adidas" onClick={toggleMenu}>GIÀY ADIDAS</Link>
+          <Link to="/mlb" onClick={toggleMenu}>GIÀY MLB</Link>
+          <Link to="/phu-kien" onClick={toggleMenu}>PHỤ KIỆN</Link>
+          <Link to="/tin-tuc" onClick={toggleMenu}>TIN TỨC</Link>
+          <Link to="/lien-he" onClick={toggleMenu}>LIÊN HỆ</Link>
           {user ? (
             <>
-              <Link to="/profile" className="text-gray-200 hover:text-indigo-400 transition-colors duration-300">
-                Profile
-              </Link>
-              <Link to="/orders" className="text-gray-200 hover:text-indigo-400 transition-colors duration-300">
-                Orders
-              </Link>
-              {isAdmin && (
-                <Link to="/admin" className="text-gray-200 hover:text-indigo-400 transition-colors duration-300">
-                  Admin
-                </Link>
-              )}
+              <Link to="/profile" onClick={toggleMenu}>Profile</Link>
+              <Link to="/orders" onClick={toggleMenu}>Orders</Link>
+              {isAdmin && <Link to="/admin" onClick={toggleMenu}>Admin</Link>}
               <button
-                onClick={signOut}
-                className="text-gray-200 hover:text-indigo-400 transition-colors duration-300"
+                onClick={() => {
+                  signOut();
+                  toggleMenu();
+                }}
+                className="logout-btn"
               >
                 Logout
               </button>
             </>
           ) : (
             <>
-              <Link to="/login" className="text-gray-200 hover:text-indigo-400 transition-colors duration-300">
-                Login
-              </Link>
-              <Link to="/register" className="text-gray-200 hover:text-indigo-400 transition-colors duration-300">
-                Register
-              </Link>
+              <Link to="/login" onClick={toggleMenu}>Đăng nhập</Link>
+              <Link to="/register" onClick={toggleMenu}>Đăng ký</Link>
             </>
           )}
-        </nav>
-        {/* Cart Icon & Hamburger */}
-        <div className="flex items-center space-x-4">
-          <Link to="/cart" className="text-gray-200 hover:text-indigo-400 transition-colors duration-300">
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"
-              />
-            </svg>
-          </Link>
-          <button
-            className="md:hidden text-gray-200 hover:text-indigo-400 transition-colors duration-300"
-            onClick={toggleMenu}
-            aria-label="Toggle menu"
-          >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d={isMenuOpen ? 'M6 18L18 6M6 6l12 12' : 'M4 6h16M4 12h16M4 18h16'}
-              />
-            </svg>
-          </button>
-        </div>
-      </div>
-      {/* Mobile Navigation */}
-      {isMenuOpen && (
-        <nav className="md:hidden bg-gray-800 px-4 py-6">
-          <div className="flex flex-col space-y-4">
-            {['Home', 'Cart', ...(user ? ['Profile', 'Orders', ...(isAdmin ? ['Admin'] : [])] : ['Login', 'Register'])].map((item) => (
-              <Link
-                key={item}
-                to={`/${item.toLowerCase()}`}
-                className="text-gray-200 hover:text-indigo-400 transition-colors duration-300"
-                onClick={toggleMenu}
-              >
-                {item}
-              </Link>
-            ))}
-            {user && (
-              <button
-                onClick={() => {
-                  signOut();
-                  toggleMenu();
-                }}
-                className="text-gray-200 hover:text-indigo-400 text-left transition-colors duration-300"
-              >
-                Logout
-              </button>
-            )}
-          </div>
         </nav>
       )}
     </header>

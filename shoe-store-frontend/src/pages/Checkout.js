@@ -37,41 +37,83 @@ function Checkout() {
   };
 
   return (
-    <div className="container py-12">
-      <h2 className="text-3xl font-bold text-gray-800 mb-8 text-center">Checkout</h2>
-      <div className="max-w-lg mx-auto bg-white p-8 rounded-xl shadow-lg">
-        <h3 className="text-xl font-semibold text-gray-700 mb-6">Order Details</h3>
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div>
-            <label className="block text-sm font-medium text-gray-600 mb-2">Shipping Address</label>
-            <input
-              type="text"
-              name="shippingAddress"
-              value={formData.shippingAddress}
-              onChange={handleChange}
-              className="input-field"
-              required
-              placeholder="Enter shipping address"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-600 mb-2">Payment Method</label>
-            <select
-              name="paymentMethod"
-              value={formData.paymentMethod}
-              onChange={handleChange}
-              className="input-field"
-              required
-            >
-              <option value="CreditCard">Credit Card</option>
-              <option value="PayPal">PayPal</option>
-              <option value="CashOnDelivery">Cash on Delivery</option>
-            </select>
-          </div>
-          <button type="submit" className="btn-primary w-full">
-            Place Order - ${total.toFixed(2)}
-          </button>
-        </form>
+    <div className="checkout-wrapper container py-12">
+      <h2 className="checkout-title">THANH TOÁN</h2>
+
+      <div className="checkout-content">
+        {/* Bảng sản phẩm giống trang Cart */}
+        <table className="checkout-table">
+          <thead>
+            <tr>
+              <th>Hình ảnh</th>
+              <th>Tên sản phẩm</th>
+              <th>Số lượng</th>
+              <th>Đơn giá</th>
+              <th>Tổng</th>
+            </tr>
+          </thead>
+          <tbody>
+            {cart.map((item) => (
+              <tr key={item.productId}>
+                <td>
+                  <img
+                    src={item.product.imageUrl || "placeholder.jpg"}
+                    alt={item.product.name}
+                    className="checkout-img"
+                  />
+                </td>
+                <td className="product-name">{item.product.name}</td>
+                <td>{item.quantity}</td>
+                <td>{item.product.price.toLocaleString()}₫</td>
+                <td>{(item.product.price * item.quantity).toLocaleString()}₫</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+
+        {/* Form thông tin giao hàng + tổng tiền */}
+        <div className="checkout-summary">
+          <h3>Thông tin đơn hàng</h3>
+          <form onSubmit={handleSubmit} className="checkout-form">
+            <div className="form-group">
+              <label>Địa chỉ giao hàng</label>
+              <input
+                type="text"
+                name="shippingAddress"
+                value={formData.shippingAddress}
+                onChange={handleChange}
+                required
+                placeholder="Nhập địa chỉ giao hàng"
+              />
+            </div>
+            <div className="form-group">
+              <label>Phương thức thanh toán</label>
+              <select
+                name="paymentMethod"
+                value={formData.paymentMethod}
+                onChange={handleChange}
+                required
+              >
+                <option value="CreditCard">Credit Card</option>
+                <option value="PayPal">PayPal</option>
+                <option value="CashOnDelivery">Cash on Delivery</option>
+              </select>
+            </div>
+
+            <div className="summary-box">
+              <p>
+                Thành tiền: <span>{total.toLocaleString()}₫</span>
+              </p>
+              <p className="summary-total">
+                Tổng cộng: <span>{total.toLocaleString()}₫</span>
+              </p>
+            </div>
+
+            <button type="submit" className="checkout-btn">
+              ĐẶT HÀNG
+            </button>
+          </form>
+        </div>
       </div>
     </div>
   );
